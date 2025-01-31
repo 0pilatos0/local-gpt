@@ -5,7 +5,7 @@ FROM oven/bun:latest AS builder
 WORKDIR /app
 
 # Copy package files
-COPY bun.lockb package.json ./
+COPY bun.lock package.json ./
 
 # Install dependencies
 RUN bun install
