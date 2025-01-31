@@ -11,7 +11,8 @@ import { Settings, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChat } from "../hooks/useChat";
 import { AVAILABLE_MODELS } from "../types/settings";
-import { useSettings } from "../hooks/useSettings";
+import { SettingsDialog } from "@/components/SettingsDialog";
+import { useSettings } from "@/hooks/useSettings";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,

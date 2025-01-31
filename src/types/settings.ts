@@ -5,12 +5,12 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   apiUrl: "http://localhost:11434/api/chat",
-  model: "llama2",
+  model: "llama3.2",
 };
 
 export const AVAILABLE_MODELS = [
-  { id: "llama2", name: "LLaMA 2" },
-  { id: "mistral", name: "Mistral" },
-  { id: "codellama", name: "CodeLLaMA" },
-  { id: "neural-chat", name: "Neural Chat" },
+  { id: "llama3.2", name: "Llama 3.2", description: "General-purpose language model" },
+  //   { id: "mistral", name: "Mistral", description: "Fast and efficient language model" },
+  //   { id: "codellama", name: "CodeLLaMA", description: "Specialized for code generation" },
+  //   { id: "neural-chat", name: "Neural Chat", description: "Optimized for conversations" },
 ] as const;
