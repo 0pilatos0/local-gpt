@@ -172,4 +172,23 @@
     background-image: linear-gradient(to right, #80808012 1px, transparent 1px), linear-gradient(to bottom, #80808012 1px, transparent 1px);
     background-size: 24px 24px;
   }
+  .prose {
+    @apply text-foreground;
+  }
+
+  .prose pre {
+    @apply p-0 my-2 bg-transparent;
+  }
+
+  .prose code {
+    @apply font-mono text-sm;
+  }
+
+  .prose pre > div {
+    @apply rounded-lg !bg-muted/50 border shadow-sm;
+  }
+
+  .dark .prose pre > div {
+    @apply !bg-muted/20;
+  }
 }

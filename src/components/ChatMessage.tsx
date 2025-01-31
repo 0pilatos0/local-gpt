@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface ChatMessageProps {
   message: Message;
@@ -54,7 +56,34 @@ export function ChatMessage({ message }: ChatMessageProps) {
           >
             <CardContent className="p-3 relative group">
               <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown>{message.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      const language = match ? match[1] : "";
+
+                      if (!inline && language) {
+                        return (
+                          <SyntaxHighlighter style={oneDark} language={language} PreTag="div" className="rounded-md" {...props}>
+                            {String(children).replace(/\n$/, "")}
+                          </SyntaxHighlighter>
+                        );
+                      }
+
+                      return inline ? (
+                        <code className="bg-muted px-1.5 py-0.5 rounded-md text-sm" {...props}>
+                          {children}
+                        </code>
+                      ) : (
+                        <SyntaxHighlighter style={oneDark} language="text" PreTag="div" className="rounded-md" {...props}>
+                          {String(children).replace(/\n$/, "")}
+                        </SyntaxHighlighter>
+                      );
+                    },
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
               </div>
 
               <div className={cn("absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity", "flex items-center gap-1")}>
