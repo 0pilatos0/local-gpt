@@ -27,10 +27,13 @@ export class ChatError extends Error {
   }
 }
 
+export type ConnectionStatus = "connected" | "disconnected" | "checking";
+
 export type ChatState = {
   messages: Message[];
   isStreaming: boolean;
   error: string | null;
+  connectionStatus: ConnectionStatus;
 };
 
 export type ChatAction =
@@ -39,4 +42,5 @@ export type ChatAction =
   | { type: "SET_STREAMING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string }
   | { type: "CLEAR_ERROR" }
-  | { type: "CLEAR_CHAT" }; // Add this line
+  | { type: "CLEAR_CHAT" }
+  | { type: "SET_CONNECTION_STATUS"; payload: ConnectionStatus };

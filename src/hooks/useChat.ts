@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChatState, ChatAction, Message } from "../types/chat";
+import { ChatState, ChatAction, Message, ConnectionStatus } from "../types/chat";
 import { ChatService } from "../services/chat";
 import { CHAT_CONFIG } from "../constants/chat";
 import { Settings } from "../types/settings";
@@ -8,6 +8,7 @@ const initialState: ChatState = {
   messages: [],
   isStreaming: false,
   error: null,
+  connectionStatus: "checking",
 };
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
@@ -35,6 +36,8 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         messages: [],
         error: null,
       };
+    case "SET_CONNECTION_STATUS":
+      return { ...state, connectionStatus: action.payload };
     default:
       return state;
   }
@@ -103,6 +106,25 @@ export function useChat(settings: Settings) {
     [state.messages, state.isStreaming, settings]
   );
 
+  const checkConnection = React.useCallback(async () => {
+    dispatch({ type: "SET_CONNECTION_STATUS", payload: "checking" });
+    try {
+      const response = await fetch(`${settings.apiUrl.replace("/chat", "")}/version`);
+      if (!response.ok) throw new Error("Connection failed");
+      dispatch({ type: "SET_CONNECTION_STATUS", payload: "connected" });
+    } catch (error) {
+      dispatch({ type: "SET_CONNECTION_STATUS", payload: "disconnected" });
+      dispatch({
+        type: "SET_ERROR",
+        payload: "Cannot connect to Ollama instance. Please check your settings and make sure Ollama is running.",
+      });
+    }
+  }, [settings.apiUrl]);
+
+  React.useEffect(() => {
+    checkConnection();
+  }, [checkConnection]);
+
   return {
     messages: state.messages,
     isStreaming: state.isStreaming,
@@ -111,5 +133,7 @@ export function useChat(settings: Settings) {
     clearError: () => dispatch({ type: "CLEAR_ERROR" }),
     cancelChat,
     clearChat,
+    connectionStatus: state.connectionStatus,
+    checkConnection,
   };
 }

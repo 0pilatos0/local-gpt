@@ -4,7 +4,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import { ChatInput } from "../components/ChatInput";
 import { CHAT_CONFIG } from "../constants/chat";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Bot } from "lucide-react";
+import { Bot, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Settings, Info } from "lucide-react";
@@ -13,6 +13,7 @@ import { useChat } from "../hooks/useChat";
 import { AVAILABLE_MODELS } from "../types/settings";
 import { SettingsDialog } from "@/components/SettingsDialog";
 import { useSettings } from "@/hooks/useSettings";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -78,6 +79,31 @@ function HomeComponent() {
         <div className="flex-1 overflow-y-auto relative">
           <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
           <div className="max-w-3xl mx-auto p-4 space-y-6 relative">
+            {chat.connectionStatus === "disconnected" && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Connection Error</AlertTitle>
+                <AlertDescription className="mt-2">
+                  Cannot connect to Ollama instance. Please make sure:
+                  <ul className="list-disc pl-4 mt-2 space-y-1">
+                    <li>Ollama is running on your machine</li>
+                    <li>The correct API URL is set in the settings</li>
+                    <li>CORS is properly configured for this domain</li>
+                  </ul>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-4"
+                    onClick={() => {
+                      chat.checkConnection();
+                    }}
+                  >
+                    Check Connection
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
+
             {chat.error && (
               <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-center justify-between">
                 <span>{chat.error}</span>
@@ -103,7 +129,7 @@ function HomeComponent() {
           onSubmit={handleSubmit}
           onCancel={chat.cancelChat}
           onClear={chat.clearChat}
-          isDisabled={chat.isStreaming}
+          isDisabled={chat.isStreaming || chat.connectionStatus === "disconnected"}
           isStreaming={chat.isStreaming}
         />
       </motion.div>
