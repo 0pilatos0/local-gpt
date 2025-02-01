@@ -72,6 +72,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <div className="prose prose-sm dark:prose-invert max-w-none">
                 <ReactMarkdown
                   components={{
+                    // @ts-ignore
                     code({
                       node,
                       inline,
